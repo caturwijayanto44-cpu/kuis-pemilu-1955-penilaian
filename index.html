@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Millionaire Sejarah - Pemilu 1955</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Memanggil file soal eksternal -->
+<script src="soal_pemilu1955_5opsi.js"></script>
+
+
+<style>
+:root{
+  --navy:#020617;
+  --blue:#071a52;
+  --blue2:#0b2c7a;
+  --cyan:#38bdf8;
+  --gold:#fbbf24;
+  --orange:#f59e0b;
+  --green:#16a34a;
+  --red:#dc2626;
+  --white:#f8fafc;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#000;
+  color:white;
+  overflow:hidden;
+}
+button{font-family:inherit}
+
+/* CONTROL */
+.controlPanel{
+  position:fixed; top:14px; right:18px; display:flex; gap:8px; z-index:9999;
+}
+.ctrlBtn{
+  background:linear-gradient(180deg,#0f172a,#020617);
+  color:#fff; padding:9px 15px; border-radius:999px; cursor:pointer;
+  font-weight:800; border:1px solid rgba(251,191,36,.55);
+  box-shadow:0 0 12px rgba(56,189,248,.15);
+}
+.ctrlBtn:hover:not(:disabled){background:linear-gradient(180deg,#fbbf24,#d97706);color:#111827}
+.ctrlBtn:disabled{opacity:.28;cursor:not-allowed;filter:grayscale(1)}
+
+.hidden{display:none!important}
+
+/* HALAMAN AWAL / INTRO */
+#awal,#intro{position:absolute;inset:0;background-position:center;background-size:cover}
+#awal{background-image:url("bg-awal.png")}
+#intro{background-image:url("bg-intro.png")}
+.masukBtn{
+  position:absolute;bottom:120px;left:50%;transform:translateX(-50%);
+  width:290px;cursor:pointer;transition:.25s;filter:drop-shadow(0 0 16px rgba(251,191,36,.45))
+}
+.masukBtn:hover{transform:translateX(-50%) scale(1.08)}
+.introButtons{
+  position:absolute;bottom:16%;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:12px;z-index:10
+}
+.btn-main{width:220px;cursor:pointer;transition:.25s}
+.btn-main:hover{transform:scale(1.07)}
+
+/* GAME ARENA */
+#game{
+  position:absolute;inset:0;padding:24px;
+  background:
+    radial-gradient(circle at 38% 42%,rgba(37,99,235,.28),transparent 32%),
+    radial-gradient(circle at 72% 30%,rgba(124,58,237,.20),transparent 28%),
+    linear-gradient(rgba(2,6,23,.42),rgba(2,6,23,.72)),
+    url("bg-permainan.png") center/cover;
+}
+.gameLayout{
+  width:100%;height:100%;display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:22px;
+}
+.stage{
+  min-width:0;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:72px 6px 34px;
+}
+.gameBrand{
+  position:absolute;top:22px;left:34px;
+  font-weight:900;letter-spacing:.08em;color:#fbbf24;font-size:18px;
+  text-shadow:0 0 14px rgba(251,191,36,.55);
+}
+.gameBrand small{display:block;color:#e2e8f0;font-size:11px;letter-spacing:.18em;margin-top:3px}
+
+/* LIFELINES */
+.lifelines{
+  display:flex;gap:12px;justify-content:center;margin-bottom:16px;flex-wrap:wrap;
+}
+.lifeline{
+  min-width:145px;background:radial-gradient(circle at 50% 30%,#12348b,#020617 72%);
+  border:2px solid var(--cyan);color:white;border-radius:999px;padding:10px 18px;
+  font-weight:900;cursor:pointer;box-shadow:0 0 14px rgba(56,189,248,.42),inset 0 0 12px rgba(59,130,246,.25);
+  transition:.2s;
+}
+.lifeline:hover:not(:disabled){border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
+.lifeline:disabled{opacity:.25;cursor:not-allowed;text-decoration:line-through}
+
+/* QUESTION / ANSWERS: inspired by classic high-stakes quiz-show geometry, not branded */
+.questionBox{
+  position:relative;
+  background:linear-gradient(180deg,#081b58 0%,#020617 48%,#071a52 100%);
+  border:2px solid #dbeafe;
+  padding:20px 54px;text-align:center;font-size:clamp(18px,2vw,27px);
+  font-weight:900;color:white;box-shadow:0 0 24px rgba(56,189,248,.45),inset 0 0 28px rgba(37,99,235,.28);
+  clip-path:polygon(5% 0,95% 0,100% 50%,95% 100%,5% 100%,0 50%);
+  min-height:92px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+}
+.questionBox:before,.questionBox:after{
+  content:"";position:absolute;top:50%;width:18%;height:2px;background:#dbeafe;opacity:.8
+}
+.questionBox:before{right:100%}.questionBox:after{left:100%}
+
+.answerGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+.answer{
+  position:relative;
+  min-height:66px;
+  background:linear-gradient(180deg,#0a2468,#020617 58%,#071a52);
+  border:2px solid #bfdbfe;
+  padding:12px 42px;font-size:clamp(15px,1.35vw,20px);font-weight:800;color:white;
+  cursor:pointer;display:flex;align-items:center;gap:12px;
+  box-shadow:0 0 12px rgba(56,189,248,.32),inset 0 0 14px rgba(30,64,175,.35);
+  transition:.18s;
+  clip-path:polygon(7% 0,93% 0,100% 50%,93% 100%,7% 100%,0 50%);
+}
+.answer:nth-child(5){grid-column:1/-1;width:calc(50% - 8px);justify-self:center}
+.answer:hover:not(.locked):not(.blink-correct):not(.blink-wrong){
+  background:linear-gradient(180deg,#b45309,#f59e0b 50%,#92400e);
+  border-color:#fde68a;transform:scale(1.018);box-shadow:0 0 24px rgba(251,191,36,.65)
+}
+.answer.locked{
+  background:linear-gradient(180deg,#b45309,#f59e0b 50%,#92400e)!important;
+  border-color:#fff7ae!important;color:#111827!important;
+  box-shadow:0 0 30px rgba(245,158,11,.85)!important;
+}
+.opt{color:var(--gold);font-weight:1000;font-size:1.05em}
+.answer.locked .opt{color:#111827}
+
+@keyframes correctPulse{
+  0%,100%{background:linear-gradient(180deg,#14532d,#16a34a,#14532d);box-shadow:0 0 18px rgba(34,197,94,.55)}
+  50%{background:linear-gradient(180deg,#15803d,#4ade80,#15803d);box-shadow:0 0 36px rgba(74,222,128,.95)}
+}
+@keyframes wrongPulse{
+  0%,100%{background:linear-gradient(180deg,#7f1d1d,#dc2626,#7f1d1d);box-shadow:0 0 18px rgba(239,68,68,.55)}
+  50%{background:linear-gradient(180deg,#991b1b,#ef4444,#991b1b);box-shadow:0 0 36px rgba(248,113,113,.9)}
+}
+.blink-correct{animation:correctPulse .38s ease-in-out infinite!important;border-color:#bbf7d0!important}
+.blink-wrong{animation:wrongPulse .38s ease-in-out infinite!important;border-color:#fecaca!important}
+
+/* MONEY LADDER */
+.ladderPanel{
+  align-self:center;background:linear-gradient(180deg,rgba(2,6,23,.94),rgba(3,7,18,.88));
+  border:2px solid rgba(56,189,248,.55);border-radius:22px;padding:16px 12px;
+  box-shadow:0 0 26px rgba(37,99,235,.32),inset 0 0 18px rgba(30,64,175,.18);
+  margin-top:52px;width:270px;
+}
+.ladderTitle{text-align:center;color:#fbbf24;font-weight:1000;letter-spacing:.12em;margin-bottom:10px;font-size:13px}
+.ladder{padding:4px 10px;font-weight:800;color:#fbbf24;border-radius:8px;margin:1px 0;font-size:14px}
+.ladder.safe{color:#f8fafc}
+.ladder.safe:before{content:"◆ ";color:#38bdf8}
+.ladder.active{
+  background:linear-gradient(90deg,#f59e0b,#fbbf24,#f59e0b);color:#111827;
+  box-shadow:0 0 18px rgba(251,191,36,.75);transform:scale(1.03)
+}
+
+/* MODAL */
+.modalOverlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;z-index:10000
+}
+.modalCard{
+  background:linear-gradient(145deg,#091736,#020a1c);border:2px solid #ffd700;border-radius:28px;
+  padding:32px;width:90%;max-width:500px;text-align:center;
+  box-shadow:0 0 35px rgba(255,215,0,.3),inset 0 0 20px rgba(0,150,255,.2);
+  animation:modalPop .3s cubic-bezier(.175,.885,.32,1.275)
+}
+@keyframes modalPop{0%{transform:scale(.8);opacity:0}100%{transform:scale(1);opacity:1}}
+.textGold{color:#ffd700;text-shadow:0 0 10px rgba(255,215,0,.5)}
+.modalBtn{
+  background:linear-gradient(90deg,#ffd700,#ff9900);color:#000;font-weight:bold;font-size:18px;
+  padding:10px 32px;border-radius:30px;cursor:pointer;border:none;box-shadow:0 0 15px rgba(255,215,0,.4)
+}
+.barContainer{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.barLabel{font-weight:900;color:#ffd700;width:28px;font-size:18px}
+.barTrack{flex:1;height:24px;background:rgba(255,255,255,.08);border-radius:12px;overflow:hidden;border:1px solid rgba(58,167,255,.4)}
+.barFill{height:100%;background:linear-gradient(90deg,#00c6ff,#0072ff);width:0%;transition:width 1s ease-out;border-radius:12px}
+.barValue{width:50px;text-align:right;font-weight:bold;font-size:16px;color:#fff}
+
+/* RESULT */
+#resultScreen{
+  position:absolute;inset:0;background:radial-gradient(circle,#0b2c7a 0,#020617 42%,#000 100%);
+  display:none;align-items:center;justify-content:center;flex-direction:column;z-index:999;text-align:center;padding:30px
+}
+.resultTitle{font-size:clamp(34px,5vw,64px);font-weight:1000;color:#fbbf24;text-shadow:0 0 25px rgba(251,191,36,.5)}
+.resultSub{font-size:22px;color:#e2e8f0;margin:12px 0}
+#hasilUang{font-size:clamp(36px,5vw,66px);color:#fff;font-weight:1000;text-shadow:0 0 24px #38bdf8;margin:10px 0 30px}
+.resultBtn{background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#111827;padding:13px 36px;border:0;border-radius:999px;font-size:20px;font-weight:900;cursor:pointer}
+
+@media(max-width:900px){
+  body{overflow:auto}
+  #game{overflow:auto}
+  .gameLayout{grid-template-columns:1fr}
+  .ladderPanel{width:100%;margin-top:0}
+  .stage{padding-top:90px}
+}
+
+/* JUDUL KUIS PADA LAYAR INTRO */
+.introTitleBox{
+  position:absolute;
+  top:7%;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(900px,82vw);
+  text-align:center;
+  z-index:9;
+  padding:18px 28px;
+  background:linear-gradient(180deg,rgba(3,10,38,.78),rgba(2,6,23,.48));
+  border:2px solid rgba(251,191,36,.85);
+  border-radius:24px;
+  box-shadow:0 0 28px rgba(56,189,248,.32), inset 0 0 22px rgba(37,99,235,.20);
+  backdrop-filter:blur(3px);
+}
+.introKicker{
+  color:#fbbf24;
+  font-size:clamp(15px,1.3vw,21px);
+  font-weight:900;
+  letter-spacing:.18em;
+  margin-bottom:5px;
+  text-shadow:0 0 12px rgba(251,191,36,.45);
+}
+.introMainTitle{
+  color:#fff;
+  font-size:clamp(30px,3.2vw,54px);
+  line-height:1.02;
+  font-weight:1000;
+  letter-spacing:.03em;
+  text-shadow:0 3px 0 #0b2c7a,0 0 22px rgba(56,189,248,.65);
+}
+.introSubtitle{
+  margin-top:7px;
+  color:#fde68a;
+  font-size:clamp(17px,1.55vw,25px);
+  font-weight:800;
+}
+.introMeta{
+  margin-top:8px;
+  color:#e2e8f0;
+  font-size:clamp(12px,1vw,16px);
+  font-weight:700;
+  letter-spacing:.08em;
+}
+
+
+/* MODE PENILAIAN */
+.assessPanel{
+  position:absolute;left:50%;bottom:7%;transform:translateX(-50%);
+  width:min(760px,88vw);z-index:12;
+  background:linear-gradient(180deg,rgba(2,6,23,.88),rgba(7,26,82,.82));
+  border:2px solid rgba(251,191,36,.85);border-radius:22px;padding:16px 20px;
+  box-shadow:0 0 24px rgba(56,189,248,.30);backdrop-filter:blur(5px);
+}
+.assessTitle{text-align:center;color:#fbbf24;font-weight:900;margin-bottom:10px;letter-spacing:.08em}
+.assessGrid{display:grid;grid-template-columns:1.5fr 1fr auto;gap:10px}
+.assessInput{
+  width:100%;padding:12px 14px;border-radius:12px;border:1px solid #60a5fa;
+  background:#071a52;color:white;font-size:16px;outline:none
+}
+.assessInput::placeholder{color:#cbd5e1}
+.assessStart{
+  border:0;border-radius:12px;padding:11px 20px;font-weight:900;cursor:pointer;
+  background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#111827
+}
+.assessNote{text-align:center;color:#cbd5e1;font-size:12px;margin-top:8px}
+.resultIdentity{color:#fde68a;font-size:18px;font-weight:800;margin-top:6px}
+.scoreBox{
+  margin:8px 0 18px;padding:12px 20px;border:1px solid rgba(56,189,248,.55);
+  border-radius:16px;background:rgba(7,26,82,.55);font-weight:800
+}
+@media(max-width:700px){.assessGrid{grid-template-columns:1fr}.assessPanel{bottom:3%}}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="controlPanel">
+<div class="ctrlBtn" onclick="zoomGame()">🔍 Zoom</div>
+<div class="ctrlBtn" onclick="goHome()">🏠 Home</div>
+</div>
+
+<audio id="introAudio" src="intro.mp3"></audio>
+<audio id="bgm" src="bgm.mp3" loop></audio>
+<audio id="benar" src="benar.mp3"></audio>
+<audio id="salah" src="salah.mp3"></audio>
+
+<!-- HALAMAN AWAL -->
+
+<div id="awal">
+<img src="tb-masuk.png" class="masukBtn" onclick="masukGame()">
+</div>
+
+<!-- INTRO -->
+
+
+<div id="intro" class="hidden">
+
+<div class="introTitleBox">
+  <div class="introKicker">KUIS INTERAKTIF SEJARAH</div>
+  <div class="introMainTitle">PEMILU 1955</div>
+  <div class="introSubtitle">Tonggak Demokrasi dalam Sejarah Indonesia</div>
+  <div class="introMeta">SEJARAH • KELAS XII • FASE F • SEMESTER 1</div>
+</div>
+
+
+<!-- Wrapper Tombol Mulai Bermain -->
+<div class="introButtons" style="display:none">
+<img src="tb-mulai.png" class="btn-main" onclick="startGame()">
+</div>
+
+</div>
+
+<div class="assessPanel">
+  <div class="assessTitle">MODE PENILAIAN</div>
+  <div class="assessGrid">
+    <input id="studentName" class="assessInput" type="text" placeholder="Nama lengkap siswa">
+    <input id="studentClass" class="assessInput" type="text" placeholder="Kelas, contoh: XII F1">
+    <button class="assessStart" onclick="startAssessment()">MULAI PENILAIAN</button>
+  </div>
+  <div class="assessNote">Isi identitas dengan benar. Hasil akan ditampilkan setelah permainan selesai.</div>
+</div>
+
+
+<!-- GAME -->
+
+<div id="game" class="hidden">
+  <div class="gameBrand">
+    MILLIONAIRE SEJARAH
+    <small>PEMILU 1955 • KELAS XII • FASE F</small>
+  </div>
+
+  <div class="gameLayout">
+    <main class="stage">
+
+      <div class="lifelines">
+        <button id="btn5050" class="lifeline" onclick="use5050()">50:50</button>
+        <button id="btnPhone" class="lifeline" onclick="usePhone()">☎ TELEPON TEMAN</button>
+        <button id="btnAudience" class="lifeline" onclick="useAudience()">♟ TANYA PENONTON</button>
+      </div>
+
+      <div class="questionBox">
+        <h2 id="question"></h2>
+      </div>
+
+      <div class="answerGrid" id="answerGrid">
+        <div class="answer" onclick="answer(0)"><span class="opt">A:</span><span id="a0"></span></div>
+        <div class="answer" onclick="answer(1)"><span class="opt">B:</span><span id="a1"></span></div>
+        <div class="answer" onclick="answer(2)"><span class="opt">C:</span><span id="a2"></span></div>
+        <div class="answer" onclick="answer(3)"><span class="opt">D:</span><span id="a3"></span></div>
+        <div class="answer" onclick="answer(4)"><span class="opt">E:</span><span id="a4"></span></div>
+      </div>
+    </main>
+
+    <aside class="ladderPanel">
+      <div class="ladderTitle">TANGGA HADIAH</div>
+      <div id="ladder"></div>
+    </aside>
+  </div>
+</div>
+
+<!-- MODAL TELEPON TEMAN -->
+<div id="modalPhone" class="modalOverlay hidden">
+  <div class="modalCard">
+    <div class="textGold text-2xl font-bold mb-4">☎ Telepon Teman</div>
+    <p class="text-gray-300 italic mb-2 text-base">“Menurut saya, jawaban yang paling mungkin adalah…”</p>
+    <div id="phoneText" class="text-3xl font-extrabold textGold mb-6"></div>
+    <button onclick="closeModal('modalPhone')" class="modalBtn">Kembali ke Soal</button>
+  </div>
+</div>
+
+<!-- MODAL POLLING PENONTON -->
+<div id="modalAudience" class="modalOverlay hidden">
+  <div class="modalCard">
+    <div class="textGold text-2xl font-bold mb-6">♟ Hasil Polling Penonton</div>
+    <div id="audienceBars" class="mb-6 flex flex-col gap-1"></div>
+    <button onclick="closeModal('modalAudience')" class="modalBtn">Kembali ke Soal</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="resultScreen">
+  <div id="resultTitle" class="resultTitle">PERMAINAN SELESAI</div>
+  <div id="resultMessage" class="resultSub">Hadiah permainan yang diperoleh</div>
+  <div id="resultIdentity" class="resultIdentity"></div><div id="hasilUang"></div><div id="scoreDetail" class="scoreBox"></div>
+  <button onclick="restartGame()" class="resultBtn">MAIN LAGI</button>
+</div>
+
+<script>
+document.addEventListener('click', function autoFullscreen(){
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen().catch(()=>{});
+  }
+},{once:true});
+
+function masukGame(){
+  document.getElementById("awal").classList.add("hidden");
+  document.getElementById("intro").classList.remove("hidden");
+  const intro=document.getElementById("introAudio");
+  intro.currentTime=0; intro.play().catch(()=>{});
+}
+function goHome(){
+  const bgm=document.getElementById("bgm");
+  if(bgm){ bgm.pause(); bgm.currentTime=0; }
+  document.getElementById("game").classList.add("hidden");
+  document.getElementById("resultScreen").style.display="none";
+  document.getElementById("awal").classList.add("hidden");
+  document.getElementById("intro").classList.remove("hidden");
+  const intro=document.getElementById("introAudio");
+  if(intro){ intro.currentTime=0; intro.play().catch(()=>{}); }
+}
+function zoomGame(){
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+  else document.exitFullscreen().catch(()=>{});
+}
+function shuffle(array){
+  for(let i=array.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [array[i],array[j]]=[array[j],array[i]];
+  }
+  return array;
+}
+
+let bankSoal=[];
+let level=0;
+let used5050=false, usedPhone=false, usedAudience=false;
+let isAnswering=false;
+let studentName=""; let studentClass=""; let correctCount=0; let startedAt=null;
+
+const ladderMoney=[
+  "Rp100.000","Rp200.000","Rp300.000","Rp500.000","Rp1.000.000",
+  "Rp2.000.000","Rp5.000.000","Rp10.000.000","Rp25.000.000",
+  "Rp50.000.000","Rp100.000.000","Rp250.000.000","Rp500.000.000",
+  "Rp750.000.000","Rp1.000.000.000"
+];
+const safeLevels=[4,9]; // Rp1 juta dan Rp50 juta
+
+
+function startAssessment(){
+  const n=document.getElementById("studentName").value.trim();
+  const c=document.getElementById("studentClass").value.trim();
+  if(!n || !c){
+    alert("Silakan isi nama lengkap dan kelas terlebih dahulu.");
+    return;
+  }
+  studentName=n; studentClass=c; correctCount=0; startedAt=Date.now();
+  startGame();
+}
+
+function startGame(){
+  const intro=document.getElementById("introAudio");
+  intro.pause(); intro.currentTime=0;
+
+  bankSoal=shuffle([...bankSoalBesar]).slice(0,15);
+  document.getElementById("intro").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+
+  const bgm=document.getElementById("bgm");
+  bgm.currentTime=0; bgm.play().catch(()=>{});
+
+  level=0; used5050=false; usedPhone=false; usedAudience=false; isAnswering=false;
+  ["btn5050","btnPhone","btnAudience"].forEach(id=>document.getElementById(id).disabled=false);
+  load();
+}
+
+function load(){
+  const q=bankSoal[level];
+  document.getElementById("question").innerText=q.q;
+
+  for(let i=0;i<5;i++){
+    const span=document.getElementById("a"+i);
+    const parent=span.parentElement;
+    parent.style.visibility="visible";
+    parent.style.pointerEvents="auto";
+    parent.classList.remove("locked","blink-correct","blink-wrong");
+    span.innerText=q.answers[i];
+  }
+  isAnswering=false;
+  drawLadder();
+}
+
+function drawLadder(){
+  const ladder=document.getElementById("ladder");
+  ladder.innerHTML="";
+  for(let i=ladderMoney.length-1;i>=0;i--){
+    const d=document.createElement("div");
+    d.className="ladder"+(safeLevels.includes(i)?" safe":"")+(i===level?" active":"");
+    d.innerText=(i+1)+". "+ladderMoney[i];
+    ladder.appendChild(d);
+  }
+}
+
+/* Tahap khas kuis: pilihan dikunci (oranye), baru kemudian diputuskan benar/salah. */
+function answer(i){
+  if(isAnswering) return;
+  isAnswering=true;
+
+  const q=bankSoal[level];
+  const selected=document.getElementById("a"+i).parentElement;
+  selected.classList.add("locked");
+
+  document.querySelectorAll(".answer").forEach(el=>el.style.pointerEvents="none");
+
+  setTimeout(()=>{
+    selected.classList.remove("locked");
+
+    if(i===q.correct){
+      selected.classList.add("blink-correct");
+      document.getElementById("benar").currentTime=0;
+      document.getElementById("benar").play().catch(()=>{});
+
+      setTimeout(()=>{
+        correctCount++;
+        level++;
+        if(level>=15) endGame(true);
+        else load();
+      },1700);
+    }else{
+      selected.classList.add("blink-wrong");
+      const correctEl=document.getElementById("a"+q.correct).parentElement;
+      setTimeout(()=>correctEl.classList.add("blink-correct"),450);
+
+      document.getElementById("salah").currentTime=0;
+      document.getElementById("salah").play().catch(()=>{});
+
+      setTimeout(()=>endGame(false),2200);
+    }
+  },1200);
+}
+
+function closeModal(id){ document.getElementById(id).classList.add("hidden"); }
+
+/* Dengan 5 opsi, 50:50 menghilangkan 3 jawaban salah sehingga tersisa 2 pilihan. */
+function use5050(){
+  if(used5050||isAnswering) return;
+  used5050=true;
+  document.getElementById("btn5050").disabled=true;
+
+  const q=bankSoal[level];
+  const wrong=[0,1,2,3,4].filter(i=>i!==q.correct);
+  shuffle(wrong).slice(0,3).forEach(i=>{
+    document.getElementById("a"+i).parentElement.style.visibility="hidden";
+  });
+}
+
+function usePhone(){
+  if(usedPhone||isAnswering) return;
+  usedPhone=true;
+  document.getElementById("btnPhone").disabled=true;
+
+  const q=bankSoal[level];
+  const labels=["A","B","C","D","E"];
+  let suggested=q.correct;
+
+  // Bantuan kuat, tetapi tidak absolut.
+  if(Math.random()>=0.82){
+    const visibleWrong=[0,1,2,3,4].filter(i=>
+      i!==q.correct && document.getElementById("a"+i).parentElement.style.visibility!=="hidden"
+    );
+    if(visibleWrong.length) suggested=visibleWrong[Math.floor(Math.random()*visibleWrong.length)];
+  }
+  document.getElementById("phoneText").innerText="Pilihan "+labels[suggested];
+  document.getElementById("modalPhone").classList.remove("hidden");
+}
+
+function useAudience(){
+  if(usedAudience||isAnswering) return;
+  usedAudience=true;
+  document.getElementById("btnAudience").disabled=true;
+
+  const q=bankSoal[level];
+  const labels=["A","B","C","D","E"];
+  const visible=[0,1,2,3,4].filter(i=>
+    document.getElementById("a"+i).parentElement.style.visibility!=="hidden"
+  );
+
+  let pcts=[0,0,0,0,0];
+  const correctPct=Math.floor(Math.random()*21)+55; // 55–75%
+  pcts[q.correct]=correctPct;
+  let remaining=100-correctPct;
+
+  const wrongVisible=visible.filter(i=>i!==q.correct);
+  for(let k=0;k<wrongVisible.length;k++){
+    const value=(k===wrongVisible.length-1)?remaining:Math.floor(Math.random()*(remaining+1));
+    pcts[wrongVisible[k]]=value;
+    remaining-=value;
+  }
+
+  const bars=document.getElementById("audienceBars");
+  bars.innerHTML="";
+  for(let i=0;i<5;i++){
+    bars.innerHTML+=`
+      <div class="barContainer" style="${visible.includes(i)?'':'opacity:.25'}">
+        <span class="barLabel">${labels[i]}:</span>
+        <div class="barTrack"><div class="barFill" id="barFill${i}" style="width:0%"></div></div>
+        <span class="barValue">${pcts[i]}%</span>
+      </div>`;
+  }
+  document.getElementById("modalAudience").classList.remove("hidden");
+  setTimeout(()=>{
+    for(let i=0;i<5;i++){
+      const fill=document.getElementById("barFill"+i);
+      if(fill) fill.style.width=pcts[i]+"%";
+    }
+  },60);
+}
+
+function guaranteedMoney(){
+  if(level>=10) return ladderMoney[9];
+  if(level>=5) return ladderMoney[4];
+  return "Rp0";
+}
+
+function endGame(won=false){
+  document.getElementById("bgm").pause();
+  let money;
+
+  if(won){
+    money=ladderMoney[14];
+    document.getElementById("resultTitle").innerText="SELAMAT! ANDA MENAKLUKKAN 15 SOAL";
+    document.getElementById("resultMessage").innerText="Hadiah tertinggi permainan";
+  }else{
+    money=guaranteedMoney();
+    document.getElementById("resultTitle").innerText="PERMAINAN SELESAI";
+    document.getElementById("resultMessage").innerText=
+      level>=5 ? "Hadiah aman yang berhasil dipertahankan" : "Belum mencapai titik aman pertama";
+  }
+
+  document.getElementById("hasilUang").innerText=money;
+  const elapsedSec=startedAt ? Math.max(1,Math.round((Date.now()-startedAt)/1000)) : 0;
+  const attempted=Math.min(level + (won?0:1),15);
+  const score=Math.round((correctCount/15)*100);
+  document.getElementById("resultIdentity").innerText=studentName+" • "+studentClass;
+  document.getElementById("scoreDetail").innerText=
+    "Jawaban benar: "+correctCount+" dari 15 • Nilai: "+score+" • Waktu: "+elapsedSec+" detik";
+  document.getElementById("resultScreen").style.display="flex";
+}
+
+function restartGame(){ location.reload(); }
+</script>
+
+</body>
+</html>
