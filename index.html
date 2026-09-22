@@ -6,6 +6,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Millionaire Sejarah - Pemilu 1955</title>
 
+
+<link rel="preload" href="bg-awal.png" as="image">
+<link rel="preload" href="bg-intro.png" as="image">
+<link rel="preload" href="bg-permainan.png" as="image">
+<link rel="preload" href="tb-masuk.png" as="image">
+<link rel="preload" href="intro.mp3" as="audio">
+
 <script src="https://cdn.tailwindcss.com"></script>
 <!-- Memanggil file soal eksternal -->
 <script src="soal_pemilu1955_5opsi.js"></script>
@@ -425,6 +432,23 @@ button{font-family:inherit}
   .answer,.answer:nth-child(5){font-size:13px!important}
 }
 
+
+/* ===== PERFORMANCE / SEND FEEDBACK ===== */
+#sendOverlay{
+  position:fixed;inset:0;z-index:30000;display:none;align-items:center;justify-content:center;
+  background:rgba(2,6,23,.78);backdrop-filter:blur(4px);padding:20px
+}
+#sendOverlay.show{display:flex}
+.sendOverlayCard{
+  width:min(420px,90vw);padding:22px;border-radius:20px;text-align:center;
+  background:#071a52;border:1px solid rgba(56,189,248,.65);font-weight:800
+}
+.sendSpinner{
+  width:34px;height:34px;border:4px solid rgba(255,255,255,.2);border-top-color:#fbbf24;
+  border-radius:50%;margin:0 auto 12px;animation:spin .75s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
 </style>
 
 </head>
@@ -558,6 +582,15 @@ button{font-family:inherit}
   </div>
 </div>
 
+
+<div id="sendOverlay">
+  <div class="sendOverlayCard">
+    <div class="sendSpinner"></div>
+    <div>Mengirim hasil ke rekap guru...</div>
+    <div style="font-size:12px;color:#cbd5e1;margin-top:7px">Jangan tutup halaman sampai proses selesai.</div>
+  </div>
+</div>
+
 <script>
 document.addEventListener('click', function autoFullscreen(){
   const isMobile=window.matchMedia('(max-width:700px)').matches;
@@ -574,13 +607,17 @@ function masukGame(){
 }
 function goHome(){
   const bgm=document.getElementById("bgm");
+  const intro=document.getElementById("introAudio");
   if(bgm){ bgm.pause(); bgm.currentTime=0; }
+  if(intro){ intro.pause(); intro.currentTime=0; }
+
   document.getElementById("game").classList.add("hidden");
   document.getElementById("resultScreen").style.display="none";
   document.getElementById("awal").classList.add("hidden");
   document.getElementById("intro").classList.remove("hidden");
-  const intro=document.getElementById("introAudio");
-  if(intro){ intro.currentTime=0; intro.play().catch(()=>{}); }
+
+  // Kembali ke form tanpa menunggu audio/gambar dimuat ulang.
+  window.scrollTo({top:0,left:0,behavior:"auto"});
 }
 function zoomGame(){
   const isMobile=window.matchMedia('(max-width:700px)').matches;
@@ -823,13 +860,15 @@ async function sendResult(){
 
   const btn=document.getElementById("sendResultBtn");
   const status=document.getElementById("sendStatus");
+  const overlay=document.getElementById("sendOverlay");
   const diag=buildDiagnosis();
   const wrongCount=TOTAL_QUESTIONS-correctCount;
 
   btn.disabled=true;
   btn.innerText="MENGIRIM...";
   status.style.color="#fde68a";
-  status.innerText="Sedang mengirim hasil dan diagnosis ke rekap guru...";
+  status.innerText="Sedang mengirim hasil dan diagnosis...";
+  if(overlay) overlay.classList.add("show");
 
   const payload={
     attemptId,
@@ -845,23 +884,51 @@ async function sendResult(){
     perluPenguatan:diag.weakText,
     rincianDiagnosis:diag.detail
   };
+  const body=JSON.stringify(payload);
 
   try{
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),8000);
+
     await fetch(WEB_APP_URL,{
       method:"POST",
       mode:"no-cors",
       headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify(payload)
+      body,
+      signal:controller.signal,
+      keepalive:true
     });
+    clearTimeout(timer);
+
     resultSent=true;
     btn.innerText="HASIL TERKIRIM";
     status.style.color="#86efac";
-    status.innerText="Hasil dan diagnosis telah dikirim ke rekap guru.";
+    status.innerText="Hasil telah dikirim ke rekap guru.";
   }catch(e){
-    btn.disabled=false;
-    btn.innerText="COBA KIRIM LAGI";
-    status.style.color="#fecaca";
-    status.innerText="Hasil belum dapat dikirim. Periksa koneksi internet lalu coba lagi.";
+    // Jika fetch terasa lama/terputus, browser mencoba antrekan kirim ringan.
+    let queued=false;
+    try{
+      if(navigator.sendBeacon){
+        queued=navigator.sendBeacon(
+          WEB_APP_URL,
+          new Blob([body],{type:"text/plain;charset=UTF-8"})
+        );
+      }
+    }catch(_){}
+
+    if(queued){
+      resultSent=true;
+      btn.innerText="HASIL DIKIRIM";
+      status.style.color="#86efac";
+      status.innerText="Hasil sudah diteruskan ke rekap guru.";
+    }else{
+      btn.disabled=false;
+      btn.innerText="COBA KIRIM LAGI";
+      status.style.color="#fecaca";
+      status.innerText="Pengiriman belum selesai. Periksa koneksi lalu coba lagi.";
+    }
+  }finally{
+    if(overlay) overlay.classList.remove("show");
   }
 }
 
