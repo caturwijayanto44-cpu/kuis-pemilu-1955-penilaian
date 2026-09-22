@@ -305,47 +305,124 @@ button{font-family:inherit}
 .resultActions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 
 
-/* ===== RESPONSIVE MOBILE FINAL ===== */
+/* ===== RESPONSIVE MOBILE MASTER ===== */
 @media (max-width:700px){
-  html,body{min-height:100%;height:auto;overflow-x:hidden;overflow-y:auto;background:#020617}
-  .controlPanel{position:fixed;top:8px;right:8px;z-index:1200;gap:5px;transform:scale(.82);transform-origin:top right}
-  #awal{min-height:100svh;height:100svh}
-  #intro{position:relative!important;inset:auto!important;min-height:100svh!important;height:auto!important;padding:72px 12px 28px!important;overflow:visible!important;background-position:center top!important;background-size:cover!important}
-  .introTitleBox{position:relative!important;top:auto!important;left:auto!important;transform:none!important;width:100%!important;margin:0 auto 22px!important;padding:14px 12px!important;border-radius:18px!important}
-  .introKicker{font-size:12px!important;letter-spacing:.12em!important}
-  .introMainTitle{font-size:32px!important}
-  .introSubtitle{font-size:16px!important}
-  .introMeta{font-size:11px!important;letter-spacing:.03em!important}
-  .assessPanel{position:relative!important;left:auto!important;bottom:auto!important;transform:none!important;width:100%!important;margin:0 auto!important;padding:18px 14px!important;border-radius:20px!important;background:rgba(2,6,23,.94)!important}
-  .assessTitle{font-size:18px!important;line-height:1.25!important}
-  .assessGrid{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
-  .assessInput,.assessStart{min-height:52px!important;font-size:16px!important}
-  .assessNote{font-size:13px!important;line-height:1.5!important}
-  #game{position:relative!important;inset:auto!important;min-height:100svh!important;height:auto!important;overflow:visible!important;padding:74px 10px 24px!important;background-position:center top!important;background-size:cover!important}
-  .gameBrand{position:relative!important;top:auto!important;left:auto!important;margin:0 0 12px!important;font-size:20px!important;padding-right:105px!important}
-  .gameBrand small{font-size:11px!important}
-  .gameLayout{display:flex!important;flex-direction:column!important;gap:10px!important;height:auto!important}
-  .stage{padding:0!important;min-width:0!important}
+  html,body{
+    width:100%;min-height:100%;margin:0;overflow-x:hidden!important;
+    overflow-y:auto!important;background:#020617;
+  }
+  body{position:relative!important}
+
+  .controlPanel{
+    position:fixed!important;top:6px!important;right:6px!important;
+    z-index:20000!important;gap:4px!important;
+  }
+  .ctrlBtn{padding:7px 9px!important;font-size:11px!important}
+
+  #awal{
+    position:fixed!important;inset:0!important;width:100%!important;height:100svh!important;
+    background-position:center!important;background-size:cover!important;
+  }
+  .masukBtn{bottom:10vh!important;width:min(240px,66vw)!important}
+
+  #intro{
+    position:fixed!important;inset:0!important;width:100%!important;height:100svh!important;
+    min-height:100svh!important;overflow-y:auto!important;overflow-x:hidden!important;
+    padding:58px 12px 24px!important;background-position:center top!important;
+    background-size:cover!important;
+  }
+
+  .introTitleBox{
+    position:static!important;inset:auto!important;transform:none!important;
+    width:100%!important;max-width:none!important;margin:0!important;
+    padding:14px 12px!important;border-radius:18px!important;
+  }
+  .introKicker{font-size:11px!important;letter-spacing:.1em!important}
+  .introMainTitle{font-size:clamp(28px,9vw,38px)!important;line-height:1!important}
+  .introSubtitle{font-size:15px!important;line-height:1.25!important}
+  .introMeta{font-size:10px!important;letter-spacing:.02em!important;line-height:1.3!important}
+
+  .assessPanel{
+    position:static!important;inset:auto!important;transform:none!important;
+    width:100%!important;max-width:none!important;margin:18px 0 0!important;
+    padding:16px 12px!important;border-radius:18px!important;
+    background:rgba(2,6,23,.96)!important;
+  }
+  .assessTitle{font-size:17px!important;line-height:1.25!important;margin-bottom:10px!important}
+  .assessGrid{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}
+  .assessInput,.assessStart{
+    width:100%!important;min-height:50px!important;font-size:16px!important;
+  }
+  .assessNote{font-size:12px!important;line-height:1.45!important;margin-top:10px!important}
+  .introButtons{display:none!important}
+
+  #game{
+    position:fixed!important;inset:0!important;width:100%!important;height:100svh!important;
+    min-height:100svh!important;overflow-y:auto!important;overflow-x:hidden!important;
+    padding:54px 10px 20px!important;background-position:center top!important;
+    background-size:cover!important;
+  }
+  .gameBrand{
+    position:static!important;inset:auto!important;margin:0 0 8px!important;
+    padding:0 92px 0 2px!important;font-size:15px!important;line-height:1.15!important;
+  }
+  .gameBrand small{font-size:9px!important;letter-spacing:.06em!important;margin-top:3px!important}
+  .gameLayout{
+    width:100%!important;height:auto!important;display:flex!important;
+    flex-direction:column!important;gap:8px!important;
+  }
+  .stage{order:2!important;padding:0!important;min-width:0!important;display:block!important}
   .lifelines{display:none!important}
-  .questionBox{min-height:0!important;margin:8px 0 12px!important;padding:16px 14px!important;border-radius:18px!important}
-  .questionBox h2{font-size:clamp(18px,5.2vw,23px)!important;line-height:1.35!important}
-  .answerGrid{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}
-  .answer{min-height:58px!important;padding:12px 14px!important;font-size:15px!important;line-height:1.3!important;border-radius:16px!important}
-  .opt{min-width:34px!important}
-  .ladderPanel{order:-1!important;width:100%!important;padding:8px 10px!important;margin:0!important;border-radius:14px!important}
+
+  .ladderPanel{
+    order:1!important;align-self:stretch!important;width:100%!important;
+    margin:0!important;padding:7px 8px!important;border-radius:13px!important;
+  }
   .ladderTitle{display:none!important}
-  #ladder{display:grid!important;grid-template-columns:1fr!important;gap:4px!important}
-  .ladder{margin:0!important;padding:5px 8px!important;font-size:12px!important;min-height:0!important}
-  #resultScreen{position:fixed!important;inset:0!important;overflow-y:auto!important;justify-content:flex-start!important;padding:76px 12px 28px!important}
-  .resultTitle{font-size:27px!important;line-height:1.15!important}
-  .resultSub{font-size:15px!important;margin:8px 0!important}
-  .resultIdentity{font-size:16px!important}
-  #hasilUang{font-size:40px!important;margin:8px 0 12px!important}
-  .scoreBox{width:100%!important;font-size:13px!important;line-height:1.45!important;margin:6px 0 10px!important}
-  .diagnosticBox{width:100%!important;margin:6px 0!important;padding:12px!important}
-  .diagStrong,.diagWeak,.diagDetail{font-size:13px!important;line-height:1.45!important}
+  #ladder{display:grid!important;grid-template-columns:1fr!important;gap:3px!important}
+  .ladder{margin:0!important;padding:4px 7px!important;font-size:11px!important;line-height:1.25!important}
+  .ladder.active{transform:none!important}
+
+  .questionBox{
+    clip-path:none!important;border-radius:16px!important;min-height:auto!important;
+    margin:8px 0 10px!important;padding:15px 12px!important;
+  }
+  .questionBox:before,.questionBox:after{display:none!important}
+  .questionBox h2{font-size:18px!important;line-height:1.35!important;margin:0!important}
+
+  .answerGrid{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
+  .answer,.answer:nth-child(5){
+    clip-path:none!important;width:100%!important;justify-self:stretch!important;
+    min-height:54px!important;padding:11px 12px!important;border-radius:14px!important;
+    font-size:14px!important;line-height:1.3!important;gap:8px!important;
+  }
+  .opt{min-width:24px!important}
+
+  #resultScreen{
+    position:fixed!important;inset:0!important;width:100%!important;height:100svh!important;
+    overflow-y:auto!important;overflow-x:hidden!important;justify-content:flex-start!important;
+    padding:58px 12px 24px!important;
+  }
+  .resultTitle{font-size:25px!important;line-height:1.15!important}
+  .resultSub{font-size:14px!important;line-height:1.3!important;margin:7px 0!important}
+  .resultIdentity{font-size:15px!important}
+  #hasilUang{font-size:38px!important;margin:7px 0 10px!important}
+  .scoreBox{width:100%!important;font-size:12px!important;line-height:1.45!important;margin:5px 0 8px!important}
+  .diagnosticBox{width:100%!important;margin:5px 0!important;padding:11px!important}
+  .diagnosticTitle{font-size:15px!important}
+  .diagStrong,.diagWeak,.diagDetail{font-size:12px!important;line-height:1.45!important}
   .resultActions{width:100%!important;display:grid!important;grid-template-columns:1fr!important}
-  .sendResultBtn,.resultBtn{width:100%!important;margin:4px 0!important;min-height:50px!important;font-size:16px!important}
+  .sendResultBtn,.resultBtn{width:100%!important;margin:3px 0!important;min-height:48px!important;font-size:15px!important}
+}
+
+@media (max-width:380px){
+  #intro{padding-left:8px!important;padding-right:8px!important}
+  .introMainTitle{font-size:27px!important}
+  .introSubtitle{font-size:14px!important}
+  .assessPanel{padding:13px 10px!important}
+  #game{padding-left:7px!important;padding-right:7px!important}
+  .questionBox h2{font-size:17px!important}
+  .answer,.answer:nth-child(5){font-size:13px!important}
 }
 
 </style>
@@ -483,7 +560,8 @@ button{font-family:inherit}
 
 <script>
 document.addEventListener('click', function autoFullscreen(){
-  if(!document.fullscreenElement){
+  const isMobile=window.matchMedia('(max-width:700px)').matches;
+  if(!isMobile && !document.fullscreenElement){
     document.documentElement.requestFullscreen().catch(()=>{});
   }
 },{once:true});
@@ -505,6 +583,8 @@ function goHome(){
   if(intro){ intro.currentTime=0; intro.play().catch(()=>{}); }
 }
 function zoomGame(){
+  const isMobile=window.matchMedia('(max-width:700px)').matches;
+  if(isMobile) return;
   if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
   else document.exitFullscreen().catch(()=>{});
 }
